@@ -65,7 +65,7 @@ public class InventoryService : MonoBehaviour
     public void SellItem(ItemData sellingItemdata)
     {
         ItemData selecteditemData = selectedItem.GetData();
-        if (selecteditemData.quantity >= sellingItemdata.quantity)
+        if (selecteditemData.quantity > sellingItemdata.quantity)
         {
             selecteditemData.quantity -= sellingItemdata.quantity;
         }
