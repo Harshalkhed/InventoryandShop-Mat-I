@@ -21,37 +21,46 @@ public class ItemManagePanel : MonoBehaviour
     [Space(10)]
     [SerializeField] Image itemIcon;
 
+    [Header("Item Stats")]
+    private int totalQuantity;
+    private int totalWeight;
+    private float totalCost;
+
+    private bool isSelling;
     private EventService eventService;
     private ItemData itemData;
-    private bool isSelling;
-
     private void OnManageBuy(ItemData itemData)
     {
-        this.itemData = itemData;
         isSelling = false;
+        this.itemData = itemData;
         ToggleButtons(false);
         buyButton.gameObject.SetActive(true);
+        this.totalQuantity = 1;
+        this.totalWeight = itemData.weight;
+        this.totalCost = itemData.buyingprice;
+        SetItemInfoUI(itemData);
     }
 
     private void OnManageSell(ItemData itemData)
     {
-        this.itemData = itemData;
         isSelling = true;
+        this.itemData = itemData;
         ToggleButtons(false);
         sellButton.gameObject.SetActive(true);
+        this.totalQuantity = 1;
+        this.totalWeight = itemData.weight;
+        this.totalCost = itemData.sellingprice;
+        SetItemInfoUI(itemData);
     }
 
     public void SetItemInfoUI(ItemData itemData)
     {
         this.itemData = itemData;
-        if (isSelling)
-            this.itemCostText.text = $"{itemData.sellingprice}";
-        else
-            this.itemCostText.text = $"{itemData.buyingprice}";
+        this.itemCostText.text = $"{this.totalCost}";
 
         this.itemNameText.text = itemData.itemName;
-        this.itemAmountText.text = $"X{itemData.quantity}";
-        this.itemWeightText.text = $"{itemData.weight}kg";
+        this.itemAmountText.text = $"X{this.totalQuantity}";
+        this.itemWeightText.text = $"{this.totalWeight}kg";
         this.itemIcon.sprite = itemData.icon;
     }
 
@@ -68,43 +77,52 @@ public class ItemManagePanel : MonoBehaviour
 
     public void OnItemQuantityIncreased()
     {
-        this.itemData.quantity++;
-        this.itemData.weight += this.itemData.weight;
+        if (this.totalQuantity < this.itemData.quantity)
+            this.totalQuantity++;
+        else
+            return;
+
+        this.totalWeight += this.itemData.weight;
 
         if (isSelling)
-            this.itemData.sellingprice += this.itemData.sellingprice;
+            this.totalCost += this.itemData.sellingprice;
         else
-            this.itemData.buyingprice += this.itemData.buyingprice;
+            this.totalCost += this.itemData.buyingprice;
 
         SetItemInfoUI(this.itemData);
     }
 
     public void OnItemQuantityDecreased()
     {
-        if (this.itemData.quantity == 1)
+        if (this.totalQuantity == 1)
             return;
 
-        this.itemData.quantity--;
-        this.itemData.weight -= this.itemData.weight;
-
+        this.totalQuantity--;
+        this.totalWeight -= this.itemData.weight;
         if (isSelling)
-            this.itemData.sellingprice -= this.itemData.sellingprice;
+            this.totalCost -= this.itemData.sellingprice;
         else
-            this.itemData.buyingprice -= this.itemData.buyingprice;
+            this.totalCost -= this.itemData.buyingprice;
 
         SetItemInfoUI(this.itemData);
     }
 
     public void OnSellItem()
     {
+        this.itemData.sellingprice = this.totalCost;
+        this.itemData.quantity = this.totalQuantity;
+        this.itemData.weight = this.totalWeight;
+        eventService.OnSellFromManagePanel.RaiseEvent(this.itemData);
         this.gameObject.SetActive(false);
-        eventService.OnSellFromManagePanel.RaiseEvent(itemData);
     }
 
     public void OnBuyItem()
     {
+        this.itemData.buyingprice = this.totalCost;
+        this.itemData.quantity = this.totalQuantity;
+        this.itemData.weight = this.totalWeight;
+        eventService.OnBuyFromManagePanel.RaiseEvent(this.itemData);
         this.gameObject.SetActive(false);
-        eventService.OnBuyFromManagePanel.RaiseEvent(itemData);
     }
 
     public void ToggleButtons(bool toggle)

@@ -12,10 +12,15 @@ public class ItemDataScriptableObject : ScriptableObject
         return items.Find(itemdata => itemdata.itemName == name);
     }
 
-    public ItemData? GetRandomItemData()
+    public ItemData GetRandomItemData()
     {
-        return null;
+        return items[Random.Range(0, items.Count)];
     }
+
+    //public ItemData? GetRandomItemData()
+    //{
+    //    return null;
+    //}
 
 }
 
@@ -28,10 +33,10 @@ public struct ItemData
     public string description;
     public float buyingprice;
     public float sellingprice;
-    public float weight;
+    public int weight;
     public ItemType itemType;
     public Rarity rarity;
-    public float quantity;
+    public int quantity;
 }
 
 public enum ItemType

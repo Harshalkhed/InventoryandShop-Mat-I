@@ -11,6 +11,7 @@ public class ItemControllerUI
     public ItemControllerUI(ItemViewUI itemViewUI)
     {
         this.itemViewUI = Object.Instantiate(itemViewUI);
+        this.itemData = new ItemData();
         this.itemViewUI.SetController(this);
     }
     public void SetParent(RectTransform transform)
@@ -26,8 +27,11 @@ public class ItemControllerUI
     public void SetData(ItemData itemData)
     {
         this.itemData = itemData;
-        itemViewUI.Init(itemData);
+        itemViewUI.SetItemUI(this.itemData);
     }
-
-    public ItemData GetData() => itemData;
+    public void DestroyItem()
+    {
+        Object.Destroy(this.itemViewUI.gameObject);
+    }
+    public ItemData GetData() => this.itemData;
 }

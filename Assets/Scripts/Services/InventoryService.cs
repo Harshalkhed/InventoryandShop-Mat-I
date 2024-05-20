@@ -20,6 +20,11 @@ public class InventoryService : MonoBehaviour
     public void Start()
     {
         AddItem();
+        AddItem();
+        AddItem();
+        AddItem();
+        AddItem();
+        AddItem();
     }
 
     private void OnDisable()
@@ -30,10 +35,7 @@ public class InventoryService : MonoBehaviour
 
     public void AddItem()
     {
-        ItemData itemData = itemDataScriptableObject.GetItemData("Necklace");
-
-        //inventoryItems.Find(itemcontrollerUI => (itemData == itemcontrollerUI.GetData()));
-
+        ItemData itemData = itemDataScriptableObject.GetRandomItemData();
         ItemControllerUI itemControllerUI = new ItemControllerUI(inventorySlotPrefab);
         itemControllerUI.SetData(itemData);
         itemControllerUI.SetParent(itemContainer);
@@ -57,6 +59,24 @@ public class InventoryService : MonoBehaviour
         eventService.OnBuyFromInfoPanel.AddListener(ShowItemManagePanel);
         eventService.OnSellFromManagePanel.AddListener(ShowConfirmationPanel);
         eventService.OnBuyFromManagePanel.AddListener(ShowConfirmationPanel);
+        eventService.OnSellItem.AddListener(SellItem);
+    }
+
+    public void SellItem(ItemData sellingItemdata)
+    {
+        ItemData selecteditemData = selectedItem.GetData();
+        if (selecteditemData.quantity >= sellingItemdata.quantity)
+        {
+            selecteditemData.quantity -= sellingItemdata.quantity;
+        }
+        else
+        {
+            inventoryItems.Remove(selectedItem);
+            selectedItem.DestroyItem();
+        }
+
+        selectedItem.SetData(selecteditemData);
+
     }
 
     public void ShowItemManagePanel(ItemData itemData)
@@ -79,6 +99,7 @@ public class InventoryService : MonoBehaviour
 
     public void ShowConfirmationPanel(ItemData itemData)
     {
+        confirmationPanel.SetItemData(itemData);
         confirmationPanel.SetSellMessageText(itemData);
         confirmationPanel.gameObject.SetActive(true);
     }

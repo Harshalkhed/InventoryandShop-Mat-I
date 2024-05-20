@@ -10,10 +10,12 @@ public class ConfirmationPanel : MonoBehaviour
     [SerializeField] Button noButton;
 
     private EventService eventService;
+    private ItemData itemData;
 
     private void OnYesButtonClicked()
     {
-        Debug.Log("Sold!!");
+        eventService.OnSellItem.RaiseEvent(this.itemData);
+        this.gameObject.SetActive(false);
     }
 
     public void Init(EventService eventService)
@@ -21,6 +23,11 @@ public class ConfirmationPanel : MonoBehaviour
         this.eventService = eventService;
         yesButton.onClick.AddListener(OnYesButtonClicked);
         noButton.onClick.AddListener(OnNoButtonClicked);
+    }
+
+    public void SetItemData(ItemData itemdata)
+    {
+        this.itemData = itemdata;
     }
 
     public void SetBuyMessageText(ItemData itemdata)
@@ -32,7 +39,6 @@ public class ConfirmationPanel : MonoBehaviour
     {
         messageText.text = $"Do you want to sell X{itemdata.quantity} of {itemdata.itemName} for {itemdata.sellingprice}";
     }
-
 
     private void OnNoButtonClicked() => this.gameObject.SetActive(false);
 
