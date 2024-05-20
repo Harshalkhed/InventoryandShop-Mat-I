@@ -4,16 +4,20 @@ using UnityEngine;
 
 public class GameService : MonoBehaviour
 {
-    public static GameService instance;
-
     [SerializeField] InventoryService inventoryService;
+    private EventService eventService;
 
-    private void Awake()
+    private void Start()
     {
-        if (instance == null)
-            instance = this;
-        else
-            Destroy(this);
+        SetDependencies();
     }
+
+    private void SetDependencies()
+    {
+        eventService = new EventService();
+        inventoryService.Init(eventService);
+    }
+
+
 
 }

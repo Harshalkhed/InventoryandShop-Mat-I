@@ -18,9 +18,9 @@ public class ItemControllerUI
         itemViewUI.transform.SetParent(transform, false);
     }
 
-    public void OnItemSelected(UnityAction<ItemData> onItemSelect)
+    public void OnItemSelected(UnityAction<ItemControllerUI> onItemSelect)
     {
-        itemViewUI.itemButton.onClick.AddListener(delegate { onItemSelect(this.itemData); });
+        itemViewUI.itemButton.onClick.AddListener(delegate { onItemSelect(this); });
     }
 
     public void SetData(ItemData itemData)
