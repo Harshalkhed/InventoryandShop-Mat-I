@@ -11,6 +11,7 @@ public class ItemControllerUI
     public ItemControllerUI(ItemViewUI itemViewUI)
     {
         this.itemViewUI = Object.Instantiate(itemViewUI);
+        this.itemData = new ItemData();
         this.itemViewUI.SetController(this);
     }
     public void SetParent(RectTransform transform)
@@ -18,16 +19,19 @@ public class ItemControllerUI
         itemViewUI.transform.SetParent(transform, false);
     }
 
-    public void OnItemSelected(UnityAction<ItemData> onItemSelect)
+    public void OnItemSelected(UnityAction<ItemControllerUI> onItemSelect)
     {
-        itemViewUI.itemButton.onClick.AddListener(delegate { onItemSelect(this.itemData); });
+        itemViewUI.itemButton.onClick.AddListener(delegate { onItemSelect(this); });
     }
 
     public void SetData(ItemData itemData)
     {
         this.itemData = itemData;
-        itemViewUI.Init(itemData);
+        itemViewUI.SetItemUI(this.itemData);
     }
-
-    public ItemData GetData() => itemData;
+    public void DestroyItem()
+    {
+        Object.Destroy(this.itemViewUI.gameObject);
+    }
+    public ItemData GetData() => this.itemData;
 }

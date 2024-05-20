@@ -18,7 +18,7 @@ public class ItemViewUI : MonoBehaviour
     }
 
 
-    public void Init(ItemData itemData)
+    public void SetItemUI(ItemData itemData)
     {
         this.iconImage.sprite = itemData.icon;
         this.quantityText.text = $"X{itemData.quantity}";
