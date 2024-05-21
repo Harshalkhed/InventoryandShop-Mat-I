@@ -1,17 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InventoryService : MonoBehaviour
 {
-    [Header("SUB PANELS")]
-    [SerializeField] ItemInfoPanel itemInfoPanel;
-    [SerializeField] ItemManagePanel itemManagePanel;
-    [SerializeField] ConfirmationPanel confirmationPanel;
-    [Space(10)]
+  
+    private ItemInfoPanel itemInfoPanel;
+    private ItemManagePanel itemManagePanel;
+    private ConfirmationPanel confirmationPanel;
+    
     [SerializeField] RectTransform itemContainer;
     [SerializeField] ItemViewUI inventorySlotPrefab;
     [SerializeField] ItemDataScriptableObject itemDataScriptableObject;
+    [SerializeField] Button gatherResourcesButton;
 
     private List<ItemControllerUI> inventoryItems = new List<ItemControllerUI>();
     private EventService eventService;
@@ -43,14 +45,15 @@ public class InventoryService : MonoBehaviour
         inventoryItems.Add(itemControllerUI);
     }
 
-
-    public void Init(EventService eventService)
+    //DI Injection
+    public void Init(EventService eventService,ItemInfoPanel itemInfoPanel,ItemManagePanel itemManagePanel,ConfirmationPanel confirmationPanel)
     {
         this.eventService = eventService;
-        SetEvents();
+        
         itemInfoPanel.Init(eventService);
         itemManagePanel.Init(eventService);
         confirmationPanel.Init(eventService);
+        SetEvents();
     }
 
     public void SetEvents()
@@ -58,6 +61,7 @@ public class InventoryService : MonoBehaviour
         eventService.OnSellFromInfoPanel.AddListener(ShowItemManagePanel);
         eventService.OnSellFromManagePanel.AddListener(ShowConfirmationPanel);
         eventService.OnSellItem.AddListener(SellItem);
+        gatherResourcesButton.onClick.AddListener(GatherResources);
     }
 
     public void SellItem(ItemData sellingItemdata)
@@ -101,6 +105,8 @@ public class InventoryService : MonoBehaviour
         confirmationPanel.SetSellMessageText(itemData);
         confirmationPanel.gameObject.SetActive(true);
     }
+
+    public void GatherResources() => AddItem();
 
 
 }

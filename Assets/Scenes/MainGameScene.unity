@@ -2383,6 +2383,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 471692763}
   m_CullTransparentMesh: 1
+--- !u!1 &473965036
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 473965038}
+  - component: {fileID: 473965037}
+  m_Layer: 0
+  m_Name: UIServices
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &473965037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 473965036}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95a23a549fc0f0144ac0957d8d6a5f7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shopService: {fileID: 1446884512}
+  inventoryService: {fileID: 581006552}
+  itemInfoPanel: {fileID: 1712461679}
+  itemManagePanel: {fileID: 20516848}
+  confirmationPanel: {fileID: 76570032}
+--- !u!4 &473965038
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 473965036}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &516562920
 GameObject:
   m_ObjectHideFlags: 0
@@ -2939,12 +2988,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3334736fcac9d04d88c07f2fe1a3ea7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemInfoPanel: {fileID: 1712461679}
-  itemManagePanel: {fileID: 20516848}
-  confirmationPanel: {fileID: 76570032}
   itemContainer: {fileID: 1690490837}
   inventorySlotPrefab: {fileID: 5907089903566875697, guid: 3ac9231c8614d80429298b49f3f1f5ba, type: 3}
   itemDataScriptableObject: {fileID: 11400000, guid: 1005fb16f20381d49a7d5e792c456312, type: 2}
+  gatherResourcesButton: {fileID: 1459320674}
 --- !u!114 &581006553
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6242,9 +6289,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9703d120d989744db5d030e3483f7a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemInfoPanel: {fileID: 1712461679}
-  itemManagePanel: {fileID: 20516848}
-  confirmationPanel: {fileID: 76570032}
   materialsScrollView: {fileID: 608055844}
   weaponsScrollView: {fileID: 1228671942}
   treasuresScrollView: {fileID: 256428314}
@@ -8442,7 +8486,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c90387c20b7ea954aa25b106dd359e72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventoryService: {fileID: 581006552}
+  uIService: {fileID: 473965037}
 --- !u!4 &1878037442
 Transform:
   m_ObjectHideFlags: 0

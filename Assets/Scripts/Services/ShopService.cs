@@ -6,10 +6,10 @@ using UnityEngine.UI;
 public class ShopService : MonoBehaviour
 {
 
-    [Header("PANELS")]
-    [SerializeField] ItemInfoPanel itemInfoPanel;
-    [SerializeField] ItemManagePanel itemManagePanel;
-    [SerializeField] ConfirmationPanel confirmationPanel;
+    
+    private ItemInfoPanel itemInfoPanel;
+    private ItemManagePanel itemManagePanel;
+    private ConfirmationPanel confirmationPanel;
 
     [Space(10)]
     [Header("CONTAINERS")]
@@ -73,10 +73,13 @@ public class ShopService : MonoBehaviour
         itemControllerUI.OnItemSelected(OnItemSelected);
         shopItems.Add(itemControllerUI);
     }
-
-    public void Init(EventService eventService)
+    //DI injection
+    public void Init(EventService eventService,ItemInfoPanel itemInfoPanel,ItemManagePanel itemManagePanel, ConfirmationPanel confirmationPanel)
     {
         this.eventService = eventService;
+        this.itemInfoPanel = itemInfoPanel;
+        this.itemManagePanel = itemManagePanel;
+        this.confirmationPanel = confirmationPanel;
         SetEvents();
     }
 
