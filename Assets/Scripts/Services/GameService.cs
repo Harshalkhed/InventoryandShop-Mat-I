@@ -4,24 +4,39 @@ using UnityEngine;
 
 public class GameService : MonoBehaviour
 {
-    // [SerializeField] InventoryService inventoryService;
-    [SerializeField]
-    UIService uIService;
-    private EventService eventService;
+    public int coins { get; set; }
 
+    [SerializeField] UIService uIService;
+    [Space(10)]
+    [Header("ScriptableObjects")]
+    
+
+    private EventService eventService;
 
     private void Start()
     {
         SetDependencies();
     }
 
+    public void IncreaseCoins(int amount)
+    {
+        this.coins += amount;
+        uIService.SetCoinText();
+    }
+
+    public void DecreaseCoins(int amount)
+    {
+        this.coins -= amount;
+        uIService.SetCoinText();
+    }
+
     private void SetDependencies()
     {
         eventService = new EventService();
-        uIService.Init(eventService);
-        
+        uIService.Init(this,eventService);
+
     }
 
-
+    
 
 }

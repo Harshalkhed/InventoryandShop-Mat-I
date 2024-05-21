@@ -1,52 +1,52 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
-public class InventoryService : MonoBehaviour
+public class InventoryService: MonoBehaviour
 {
-
-    private ItemInfoPanel itemInfoPanel;
-    private ItemManagePanel itemManagePanel;
-    private ConfirmationPanel confirmationPanel;
-
+    [SerializeField] TMP_Text inventoryWeightText;
     [SerializeField] RectTransform itemContainer;
     [SerializeField] ItemViewUI inventorySlotPrefab;
     [SerializeField] ItemDataScriptableObject itemDataScriptableObject;
     [SerializeField] Button gatherResourcesButton;
-    [SerializeField] TMPro.TMP_Text inventoryWeightText;
+    [SerializeField] AudioSource audioSource;
+
+    [SerializeField] int maxWeight;
+    
+    
+    private ItemInfoPanel itemInfoPanel;
+    private ItemManagePanel itemManagePanel;
+    private ConfirmationPanel confirmationPanel;
+    
 
     private List<ItemControllerUI> inventoryItems = new List<ItemControllerUI>();
-    private EventService eventService;
     private ItemControllerUI selectedItem;
-    private int inventoryWeight;
+    private float inventoryWeight;
 
-    public void Start()
-    {
-        AddItem();
-        AddItem();
-        AddItem();
-        AddItem();
-        AddItem();
-        AddItem();
-    }
+    
+    private GameService gameService;
+    private EventService eventService;
+    private UIService uIservice;
+    
 
-    private void OnDisable()
-    {
-        eventService.OnSellFromInfoPanel.RemoveListener(ShowItemManagePanel);
-        eventService.OnBuyFromInfoPanel.RemoveListener(ShowItemManagePanel);
-    }
+    
 
-    public void AddItem()
+    public void GatherRandomItem()
     {
         ItemData randomItemData = itemDataScriptableObject.GetRandomItemData();
+        AddItem(randomItemData);
+    }
+
+    public void AddItem(ItemData itemToadd)
+    {
         ItemControllerUI itemController = null;
         foreach (ItemControllerUI itemControllerUI in inventoryItems)
         {
             ItemData itemData = itemControllerUI.GetData();
-          
-            if (itemData.itemName == randomItemData.itemName)
+            //if we find an item that is at its maxstack then continue on to find the same item that has not reached its max stack
+            if (itemData.itemName == itemToadd.itemName)
             {
                 if (itemData.quantity == itemData.maxStack)
                 {
@@ -57,26 +57,37 @@ public class InventoryService : MonoBehaviour
                     itemController = itemControllerUI;
                     break;
                 }
-
             }
         }
-
 
         if (itemController != null)
         {
             ItemData itemData = itemController.GetData();
             if (itemData.isStackable && itemData.quantity < itemData.maxStack)
             {
+                if (this.inventoryWeight + itemData.weight > this.maxWeight)
+                {
+                    uIservice.ShowMessage("Cannot add this item the inventory might be full!!!");
+                    return;
+                }
                 itemData.quantity++;
+                IncreaseInventoryWeight(itemData.weight);
                 itemController.SetData(itemData);
                 return;
             }
         }
-        CreateItemSlot(randomItemData);
+        CreateItemSlot(itemToadd);
     }
+
 
     public void CreateItemSlot(ItemData itemData)
     {
+        if (this.inventoryWeight + itemData.weight  >= this.maxWeight)
+        {
+            uIservice.ShowMessage("Cannot add this item the inventory might be full!!!");
+            return;
+        }
+
         ItemControllerUI itemControllerUI = new ItemControllerUI(inventorySlotPrefab);
         itemControllerUI.SetData(itemData);
         itemControllerUI.SetParent(itemContainer);
@@ -85,28 +96,21 @@ public class InventoryService : MonoBehaviour
         IncreaseInventoryWeight(itemData.weight);
     }
 
-    public void SetInventoryWeightText()
+    public void Init(GameService gameService,
+        UIService uIservice,EventService eventService)
     {
-        this.inventoryWeightText.text = $"{inventoryWeight}kg";
-    }
-
-    public void Init(EventService eventService, ItemInfoPanel itemInfoPanel,
-        ItemManagePanel itemManagePanel,
-        ConfirmationPanel confirmationPanel)
-    {
+        
+        this.gameService = gameService;
         this.eventService = eventService;
-        this.itemInfoPanel = itemInfoPanel;
-        this.itemManagePanel = itemManagePanel;
-        this.confirmationPanel = confirmationPanel;
+        this.uIservice = uIservice;
         SetEvents();
     }
 
     public void SetEvents()
     {
-        eventService.OnSellFromInfoPanel.AddListener(ShowItemManagePanel);
-        eventService.OnSellFromManagePanel.AddListener(ShowConfirmationPanel);
-        eventService.OnSellItem.AddListener(SellItem);
-        gatherResourcesButton.onClick.AddListener(GatherResources);
+        eventService.OnSellFromConfirmationPanel.AddListener(SellItem);
+        eventService.OnBuyItem.AddListener(AddItem);
+        gatherResourcesButton.onClick.AddListener(GatherRandomItem);
     }
 
     public void SellItem(ItemData sellingItemdata)
@@ -115,7 +119,7 @@ public class InventoryService : MonoBehaviour
         if (selecteditemData.quantity > sellingItemdata.quantity)
         {
             selecteditemData.quantity -= sellingItemdata.quantity;
-            IncreaseInventoryWeight(selecteditemData.weight);
+            DecreaseInventoryWeight(selecteditemData.weight);
         }
         else
         {
@@ -123,50 +127,40 @@ public class InventoryService : MonoBehaviour
             DecreaseInventoryWeight(selecteditemData.weight);
             selectedItem.DestroyItem();
         }
-
+        uIservice.ShowMessage($"You gained {sellingItemdata.sellingprice} coins!!");
         selectedItem.SetData(selecteditemData);
-
-    }
-
-    public void ShowItemManagePanel(ItemData itemData)
-    {
-        itemManagePanel.SetItemInfoUI(itemData);
-        itemManagePanel.gameObject.SetActive(true);
+        
+        this.gameService.IncreaseCoins(sellingItemdata.sellingprice);
+        this.eventService.OnSellItem.RaiseEvent(sellingItemdata);
     }
 
     public void OnItemSelected(ItemControllerUI itemControllerUI)
     {
         selectedItem = itemControllerUI;
-        ShowInfoPanel(selectedItem.GetData());
+        uIservice.ShowItemInfoPanel();
+        eventService.OnInventoryItemSelected.RaiseEvent(selectedItem.GetData());
     }
 
-    public void ShowInfoPanel(ItemData itemData)
-    {
-        itemInfoPanel.SetItemInfo(itemData, true);
-        itemInfoPanel.gameObject.SetActive(true);
-    }
-
-    public void ShowConfirmationPanel(ItemData itemData)
-    {
-        confirmationPanel.SetItemData(itemData);
-        confirmationPanel.SetSellMessageText(itemData);
-        confirmationPanel.gameObject.SetActive(true);
-    }
-
-    public void GatherResources() => AddItem();
-
-
-    public void DecreaseInventoryWeight(int weight)
+ 
+    public void DecreaseInventoryWeight(float weight)
     {
         this.inventoryWeight -= weight;
         SetInventoryWeightText();
     }
 
-    public void IncreaseInventoryWeight(int weight)
+    public void IncreaseInventoryWeight(float weight)
     {
         this.inventoryWeight += weight;
+        this.inventoryWeight = float.Parse(this.inventoryWeight.ToString("0.00"));
         SetInventoryWeightText();
     }
+
+    public void SetInventoryWeightText()
+    {
+        this.inventoryWeightText.text = $"{inventoryWeight}kg";
+    }
+
+ 
 
 
 }

@@ -17,13 +17,41 @@ public class ItemInfoPanel : MonoBehaviour
     [SerializeField] Button buyButton;
 
     private EventService eventService;
+    private UIService uiService;
     private ItemData itemData;
 
-    public void Init(EventService eventService)
+    public void Init(EventService eventService, UIService uIservice)
     {
         this.eventService = eventService;
+        this.uiService = uIservice;
+        this.eventService.OnInventoryItemSelected.AddListener(OnInventoryItemSelected);
+        this.eventService.OnShopItemSelected.AddListener(OnShopItemSelected);
         sellButton.onClick.AddListener(OnSellButtonClicked);
         buyButton.onClick.AddListener(OnBuyButtonClicked);
+    }
+
+    public void OnInventoryItemSelected(ItemData itemData)
+    {
+        this.itemData = itemData;
+        ToggleButtons(true);
+        this.itemCostText.text = $"{itemData.sellingprice}";
+        this.itemDescriptionText.text = itemData.description;
+        this.itemNameText.text = itemData.itemName;
+        this.itemAmountText.text = $"X{itemData.quantity}";
+        this.itemWeightText.text = $"{itemData.weight}kg";
+        this.itemIcon.sprite = itemData.icon;
+    }
+
+    public void OnShopItemSelected(ItemData itemData)
+    {
+        this.itemData = itemData;
+        ToggleButtons(false);
+        this.itemCostText.text = $"{itemData.buyingprice}";
+        this.itemDescriptionText.text = itemData.description;
+        this.itemNameText.text = itemData.itemName;
+        this.itemAmountText.text = $"X{itemData.quantity}";
+        this.itemWeightText.text = $"{itemData.weight}kg";
+        this.itemIcon.sprite = itemData.icon;
     }
 
     public void SetItemInfo(ItemData itemData, bool isSelling)
@@ -32,14 +60,14 @@ public class ItemInfoPanel : MonoBehaviour
         ToggleButtons(isSelling);
 
         if (isSelling)
-            this.itemCostText.text = $"Cost - {itemData.sellingprice}";
+            this.itemCostText.text = $"{itemData.sellingprice}";
         else
-            this.itemCostText.text = $"Cost - {itemData.buyingprice}";
+            this.itemCostText.text = $"{itemData.buyingprice}";
 
         this.itemDescriptionText.text = itemData.description;
         this.itemNameText.text = itemData.itemName;
         this.itemAmountText.text = $"X{itemData.quantity}";
-        this.itemWeightText.text = $"Weight - {itemData.weight}kg";
+        this.itemWeightText.text = $"{itemData.weight}kg";
         this.itemIcon.sprite = itemData.icon;
     }
 
@@ -47,14 +75,16 @@ public class ItemInfoPanel : MonoBehaviour
 
     public void OnSellButtonClicked()
     {
-        this.gameObject.SetActive(false);
+        uiService.ShowItemManagePanel();
         eventService.OnSellFromInfoPanel.RaiseEvent(this.itemData);
+        this.gameObject.SetActive(false);
     }
 
     public void OnBuyButtonClicked()
     {
-        this.gameObject.SetActive(false);
+        uiService.ShowItemManagePanel();
         eventService.OnBuyFromInfoPanel.RaiseEvent(this.itemData);
+        this.gameObject.SetActive(false);
     }
 
     public void ToggleButtons(bool isSelling)

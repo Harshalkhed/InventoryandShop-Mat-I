@@ -17,7 +17,6 @@ public class ItemDataScriptableObject : ScriptableObject
         return items[Random.Range(0, items.Count)];
     }
 
-    
 
 }
 
@@ -28,9 +27,9 @@ public struct ItemData
     public Sprite icon;
     [TextArea]
     public string description;
-    public float buyingprice;
-    public float sellingprice;
-    public int weight;
+    public int buyingprice;
+    public int sellingprice;
+    public float weight;
     public ItemType itemType;
     public Rarity rarity;
     public int quantity;
