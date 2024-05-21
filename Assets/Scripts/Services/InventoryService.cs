@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,10 +15,12 @@ public class InventoryService : MonoBehaviour
     [SerializeField] ItemViewUI inventorySlotPrefab;
     [SerializeField] ItemDataScriptableObject itemDataScriptableObject;
     [SerializeField] Button gatherResourcesButton;
+    [SerializeField] TMPro.TMP_Text inventoryWeightText;
 
     private List<ItemControllerUI> inventoryItems = new List<ItemControllerUI>();
     private EventService eventService;
     private ItemControllerUI selectedItem;
+    private int inventoryWeight;
 
     public void Start()
     {
@@ -37,14 +40,55 @@ public class InventoryService : MonoBehaviour
 
     public void AddItem()
     {
-        ItemData itemData = itemDataScriptableObject.GetRandomItemData();
+        ItemData randomItemData = itemDataScriptableObject.GetRandomItemData();
+        ItemControllerUI itemController = null;
+        foreach (ItemControllerUI itemControllerUI in inventoryItems)
+        {
+            ItemData itemData = itemControllerUI.GetData();
+          
+            if (itemData.itemName == randomItemData.itemName)
+            {
+                if (itemData.quantity == itemData.maxStack)
+                {
+                    continue;
+                }
+                else
+                {
+                    itemController = itemControllerUI;
+                    break;
+                }
+
+            }
+        }
+
+
+        if (itemController != null)
+        {
+            ItemData itemData = itemController.GetData();
+            if (itemData.isStackable && itemData.quantity < itemData.maxStack)
+            {
+                itemData.quantity++;
+                itemController.SetData(itemData);
+                return;
+            }
+        }
+        CreateItemSlot(randomItemData);
+    }
+
+    public void CreateItemSlot(ItemData itemData)
+    {
         ItemControllerUI itemControllerUI = new ItemControllerUI(inventorySlotPrefab);
         itemControllerUI.SetData(itemData);
         itemControllerUI.SetParent(itemContainer);
         itemControllerUI.OnItemSelected(OnItemSelected);
         inventoryItems.Add(itemControllerUI);
+        IncreaseInventoryWeight(itemData.weight);
     }
 
+    public void SetInventoryWeightText()
+    {
+        this.inventoryWeightText.text = $"{inventoryWeight}kg";
+    }
 
     public void Init(EventService eventService, ItemInfoPanel itemInfoPanel,
         ItemManagePanel itemManagePanel,
@@ -71,10 +115,12 @@ public class InventoryService : MonoBehaviour
         if (selecteditemData.quantity > sellingItemdata.quantity)
         {
             selecteditemData.quantity -= sellingItemdata.quantity;
+            IncreaseInventoryWeight(selecteditemData.weight);
         }
         else
         {
             inventoryItems.Remove(selectedItem);
+            DecreaseInventoryWeight(selecteditemData.weight);
             selectedItem.DestroyItem();
         }
 
@@ -108,4 +154,19 @@ public class InventoryService : MonoBehaviour
     }
 
     public void GatherResources() => AddItem();
+
+
+    public void DecreaseInventoryWeight(int weight)
+    {
+        this.inventoryWeight -= weight;
+        SetInventoryWeightText();
+    }
+
+    public void IncreaseInventoryWeight(int weight)
+    {
+        this.inventoryWeight += weight;
+        SetInventoryWeightText();
+    }
+
+
 }

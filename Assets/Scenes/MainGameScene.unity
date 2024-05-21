@@ -2835,6 +2835,7 @@ MonoBehaviour:
   inventorySlotPrefab: {fileID: 5907089903566875697, guid: 3ac9231c8614d80429298b49f3f1f5ba, type: 3}
   itemDataScriptableObject: {fileID: 11400000, guid: 1005fb16f20381d49a7d5e792c456312, type: 2}
   gatherResourcesButton: {fileID: 1459320674}
+  inventoryWeightText: {fileID: 365107179}
 --- !u!114 &581006553
 MonoBehaviour:
   m_ObjectHideFlags: 0
