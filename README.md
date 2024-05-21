@@ -117,9 +117,9 @@ An overlay text will appear for a few seconds
 The current Cumulative weight of the inventory will be decreased
 
 
-- Use of Design Patterns 
+Use of Design Patterns 
 - MVC
 - DependencyInjection
 - Observer
 
-
+https://www.loom.com/share/9f796272361e4b8e8b77dbf842d21f1c
