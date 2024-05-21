@@ -5,11 +5,11 @@ using UnityEngine.UI;
 
 public class InventoryService : MonoBehaviour
 {
-  
+
     private ItemInfoPanel itemInfoPanel;
     private ItemManagePanel itemManagePanel;
     private ConfirmationPanel confirmationPanel;
-    
+
     [SerializeField] RectTransform itemContainer;
     [SerializeField] ItemViewUI inventorySlotPrefab;
     [SerializeField] ItemDataScriptableObject itemDataScriptableObject;
@@ -45,14 +45,15 @@ public class InventoryService : MonoBehaviour
         inventoryItems.Add(itemControllerUI);
     }
 
-    //DI Injection
-    public void Init(EventService eventService,ItemInfoPanel itemInfoPanel,ItemManagePanel itemManagePanel,ConfirmationPanel confirmationPanel)
+
+    public void Init(EventService eventService, ItemInfoPanel itemInfoPanel,
+        ItemManagePanel itemManagePanel,
+        ConfirmationPanel confirmationPanel)
     {
         this.eventService = eventService;
-        
-        itemInfoPanel.Init(eventService);
-        itemManagePanel.Init(eventService);
-        confirmationPanel.Init(eventService);
+        this.itemInfoPanel = itemInfoPanel;
+        this.itemManagePanel = itemManagePanel;
+        this.confirmationPanel = confirmationPanel;
         SetEvents();
     }
 
@@ -107,6 +108,4 @@ public class InventoryService : MonoBehaviour
     }
 
     public void GatherResources() => AddItem();
-
-
 }

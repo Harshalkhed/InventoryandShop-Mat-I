@@ -73,13 +73,14 @@ public class ShopService : MonoBehaviour
         itemControllerUI.OnItemSelected(OnItemSelected);
         shopItems.Add(itemControllerUI);
     }
-    //DI injection
-    public void Init(EventService eventService,ItemInfoPanel itemInfoPanel,ItemManagePanel itemManagePanel, ConfirmationPanel confirmationPanel)
+
+    public void Init(EventService eventService, ItemInfoPanel itemInfopanel, ItemManagePanel itemManagePanel,
+        ConfirmationPanel confirmationpanel)
     {
         this.eventService = eventService;
-        this.itemInfoPanel = itemInfoPanel;
+        this.itemInfoPanel = itemInfopanel;
         this.itemManagePanel = itemManagePanel;
-        this.confirmationPanel = confirmationPanel;
+        this.confirmationPanel = confirmationpanel;
         SetEvents();
     }
 
