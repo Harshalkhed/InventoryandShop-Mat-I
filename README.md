@@ -4,7 +4,7 @@
 
 One Panel represents Shop and the other represents Player Inventory
 
-Your current **Currency** will displayed on the top of the Screen
+current **Currency** will displayed on the top of the Screen
 
 Initially, your player inventory will be empty and you will have no money
 
