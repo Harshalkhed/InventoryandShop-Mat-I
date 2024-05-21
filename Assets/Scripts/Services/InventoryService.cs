@@ -56,9 +56,7 @@ public class InventoryService : MonoBehaviour
     public void SetEvents()
     {
         eventService.OnSellFromInfoPanel.AddListener(ShowItemManagePanel);
-        eventService.OnBuyFromInfoPanel.AddListener(ShowItemManagePanel);
         eventService.OnSellFromManagePanel.AddListener(ShowConfirmationPanel);
-        eventService.OnBuyFromManagePanel.AddListener(ShowConfirmationPanel);
         eventService.OnSellItem.AddListener(SellItem);
     }
 

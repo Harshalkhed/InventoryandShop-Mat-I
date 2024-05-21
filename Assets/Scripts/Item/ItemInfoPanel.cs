@@ -19,20 +19,11 @@ public class ItemInfoPanel : MonoBehaviour
     private EventService eventService;
     private ItemData itemData;
 
-    private void OnEnable()
-    {
-        sellButton.onClick.AddListener(OnSellButtonClicked);
-    }
-
-    private void OnDisable()
-    {
-        buyButton.onClick.AddListener(OnBuyButtonClicked);
-    }
-
-
     public void Init(EventService eventService)
     {
         this.eventService = eventService;
+        sellButton.onClick.AddListener(OnSellButtonClicked);
+        buyButton.onClick.AddListener(OnBuyButtonClicked);
     }
 
     public void SetItemInfo(ItemData itemData, bool isSelling)
